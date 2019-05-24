@@ -1,3 +1,2 @@
-var url = "localhost";
 
-exports.url = url;
+export  let url = 3;

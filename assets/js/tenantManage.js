@@ -1,4 +1,4 @@
-
+const url = "localhost";
 var partnerData;
 var selectedpartner;
 $(document).ready(function() {

@@ -1,8 +1,6 @@
-var urlFile  = require('./config');
-var url = urlFile.url;
-
+const url = "localhost";
 $(document).ready(function() {
-
+    
         fetchpartners();
     document.getElementById("add-partner-button").addEventListener("click", function(){
         var partnerName = $("#partner-name").val();
