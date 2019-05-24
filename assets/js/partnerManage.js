@@ -1,3 +1,6 @@
+var urlFile  = require('./config');
+var url = urlFile.url;
+
 $(document).ready(function() {
 
         fetchpartners();
@@ -35,7 +38,7 @@ $(document).ready(function() {
 
            }
             console.log(payl)
-           fetch("http://localhost:3030/addPartners",{
+           fetch(`http://${url}:3030/addPartners`,{
                method:'POST',
                headers: {
                    'Accept': 'application/json',
@@ -115,7 +118,7 @@ $(document).on('click','button.btn.btn-danger.btn-link.btn-sm',function () {
         var payl = {
             id
         };
-        fetch("http://localhost:3030/deletePartner",{
+        fetch(`http://${url}:3030/deletePartner`,{
             method:'POST',
             headers: {
                 'Accept': 'application/json',
@@ -126,6 +129,7 @@ $(document).on('click','button.btn.btn-danger.btn-link.btn-sm',function () {
             .then((res) =>{
                 if(res.status ===  200){
                     $(this).closest("tr").remove();
+                    $('#partners-table tbody').innerHTML = "";
                     fetchpartners();
 
 
@@ -146,12 +150,13 @@ $(document).on('click','button.btn.btn-danger.btn-link.btn-sm',function () {
 
 
 function fetchpartners() {
-    fetch('http://localhost:3030/getPartners')
+    fetch(`http://${url}:3030/getPartners`)
         .then((data) => data.json())
         .then((data) => {
-            $('#partners-table tbody').innerHTML = "";
+            $("#partners-table").find("tr:gt(0)").remove();
             if(data.success){
                 let data_arr = data.data;
+                console.log(data_arr)
                 data_arr.forEach((item) => {
                     var id = item.partnerId;
                     var name = item.displayName;
@@ -159,7 +164,7 @@ function fetchpartners() {
                     var admin = item.members.find(x => x.role == "PARTNER_ADMIN");
                     var admin_name = admin.displayName;
                     var admin_email = admin.email;
-                    var parent_name = item.parentPartner ? item.parentPartner : "-";
+                    var parent_name = item.parentPartner ? item.parentPartner.value : "-";
 
                     var payl = `<tr> <td>${id}</td> <td>${name}</td> <td>${admin_name}</td> <td>${admin_email}</td> <td>${parent_name}</td> <td class="td-actions text-right"><button type="button" rel="tooltip" title="" class="btn btn-primary btn-link btn-sm" data-original-title="Edit Task"><i class="material-icons">edit</i></button><button type="button" rel="tooltip" title="" class="btn btn-danger btn-link btn-sm" data-original-title="Remove"><i class="material-icons">close</i></button></td></tr> 
 ` ;

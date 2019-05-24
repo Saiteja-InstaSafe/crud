@@ -1,6 +1,8 @@
 
 var partnerData;
+var tenantData;
 var selectedpartner;
+var selectedtenant;
 $(document).ready(function() {
 
     getPartnersData();
@@ -67,6 +69,8 @@ $('#parentSelect').on('change', function (e) {
     var name = selected[0].value;
 
     var id = partnerData.find(data => data.name === name);
+
+
     var partnerId = document.getElementById("partnerID");
 
     partnerId.value = id;
@@ -193,3 +197,27 @@ function getPartnersData() {
             });
         })
 }
+
+function fetchtenants(id) {
+    fetch(`http://${url}:3030/getTenants/${id}`)
+        .then((data) => data.json())
+        .then((data) => {
+          //  parterData = [];
+            
+            if(data.success && data.data.length > 0){
+                let data_arr = data.data;
+                data_arr.forEach((item) => {
+            
+            
+                })
+
+            }
+            else{
+                console.log("length of returned array of zero")
+                $('#partners-table tbody tr').remove();
+            }
+        })
+        .catch((er) => {
+            console.log(er)
+        })
+};

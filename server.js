@@ -12,15 +12,26 @@ app.use(bodyParser.urlencoded({
 
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/examples/dashboard.html');
+    res.sendFile(__dirname + '/examples/partnerManage.html');
 });
+
+app.get('/tenantManage.html', (req, res) => {
+    res.sendFile(__dirname + '/examples/tenantManage.html');
+});
+app.get('/partnerManage.html', (req, res) => {
+    res.sendFile(__dirname + '/examples/partnerManage.html');
+});
+app.get('/userManage.html', (req, res) => {
+    res.sendFile(__dirname + '/examples/userManage.html');
+});
+
 
 app.get('/getPartners',(req,res) => {
     request('http://35.244.1.53:7678/console/partners/listall/page/0/size/100', {json: true}, (err, response, body) => {
         //console.log(body);
         res.send(body)
 
-    })
+    })  
 });
 
 app.get('/getTenants/:id',(req,res) => {
@@ -69,7 +80,7 @@ app.post('/deletePartner',(req,res)=>{
     console.log('http://35.244.1.53:7678/console/partners/'+req.body.id);
     var url = 'http://35.244.1.53:7678/console/partners/'+req.body.id;
     request.delete(url,{},(err,response,body) =>{
-        console.log(response)
+        res.send(response)
     });
 
 });
@@ -78,7 +89,7 @@ app.post('/deleteTenant',(req,res)=>{
     console.log('http://35.244.1.53:7678/console/tenants/'+req.body.id);
     var url = 'http://35.244.1.53:7678/console/tenants/'+req.body.id;
     request.delete(url,{},(err,response,body) =>{
-        console.log(response)
+        res.send(response)
     });
 
 });
