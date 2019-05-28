@@ -1,6 +1,6 @@
 const url = "localhost";
 var partnerData;
-var tenantData;
+var tenantData =[];
 var selectedpartner;
 var selectedtenant;
 $(document).ready(function() {
@@ -8,28 +8,34 @@ $(document).ready(function() {
     getPartnersData();
 
     document.getElementById("add-partner-button").addEventListener("click", function() {
-        let displayName = $("#partner-name").val();
-        let primaryAdminName = $("#partner-admin-name").val();
-        let primaryAdminEmail = $("#partner-admin-email").val();
+        let userName = Math.round(Math.random()*10000);
+        let displayName = document.getElementById('user-name').value;
+        let userType = 1;
         let partnerName = $('#parentSelect option:selected').text();
-        let partnerId = partnerData.find(x => x.name === partnerName.trim());
-        partnerId = partnerId.id;
-        console.log(partnerData);
+        let partnerId = document.getElementById('partnerID').value;
+        
+        let tenantName =  $('#tenantSelect option:selected').text();
+        let tenantId = document.getElementById('tenantID').value;
+        let createdBy = "userCreator"
+       
 
 
         var payl;
 
-        if (primaryAdminEmail && primaryAdminName && partnerName) {
+        if (userName && tenantName && partnerName) {
             payl = {
-                displayName,
-                primaryAdminName,
-                primaryAdminEmail,
-                partnerName,
-                partnerId
+               userName,
+               displayName,
+               userType,
+               partnerName,
+               partnerId,
+               tenantId,
+               tenantName,
+               createdBy
             };
             console.log(payl);
 
-                       fetch(`http://${url}:3030/addTenants`,{
+                       fetch(`http://${url}:3030/addUsers`,{
                            method:'POST',
                            headers: {
                                'Accept': 'application/json',
@@ -45,13 +51,13 @@ $(document).ready(function() {
                                    $("#good-alert").fadeTo(2000, 500).slideUp(500, function () {
                                        $("#good-alert").slideUp(500);
                                    });
-                                   if(selectedpartner) fetchtenants(selectedpartner);
+                                   if(selectedtenant) fetchUsers(selectedtenant);
 
                                }
                             else{
                                    $('#createParent').trigger('reset');
                                    $('#exampleModalCenter').modal('hide');
-                                   if(selectedpartner) fetchtenants(selectedpartner);
+                                   if(selectedtenant) fetchUsers(selectedtenant);
 
                                }
 
@@ -69,11 +75,12 @@ $('#parentSelect').on('change', function (e) {
     var name = selected[0].value;
 
     var id = partnerData.find(data => data.name === name);
-
-
+   fetchtenants(id.id);
+    console.log(id.id);
+   
     var partnerId = document.getElementById("partnerID");
 
-    partnerId.value = id;
+    partnerId.value = id.id;
 
 });
 $('#parentSelect2').on('change', function (e) {
@@ -82,11 +89,33 @@ $('#parentSelect2').on('change', function (e) {
     console.log('changed');
     var name = selected[0].value;
 
-
+  
     var id = partnerData.find(data => data.name === name);
     console.log(partnerData);
+
     selectedpartner = id.id;
     fetchtenants(id.id);
+
+});
+
+
+$('#tenantSelect2').on('change',function(e){
+    var selected = $(this);
+    var tenantName  = selected[0].value;
+   
+    var tenantID = tenantData.find(data => data.name === tenantName);
+    selectedtenant = tenantID.id;
+    fetchUsers(tenantID.id);
+
+
+});
+$('#tenantSelect').on('change',function(e){
+    var selected = $(this);
+    var tenantName  = selected[0].value;
+    var tenantID = tenantData.find(data => data.name === tenantName);
+    var ti = document.getElementById("tenantID");
+    ti.value = tenantID.id;
+
 
 });
 
@@ -97,7 +126,7 @@ $(document).on('click','button.btn.btn-danger.btn-link.btn-sm',function () {
         var payl = {
             id
         };
-        fetch(`http://${url}:3030/deleteTenant`,{
+        fetch(`http://${url}:3030/deleteUser`,{
             method:'POST',
             headers: {
                 'Accept': 'application/json',
@@ -109,8 +138,8 @@ $(document).on('click','button.btn.btn-danger.btn-link.btn-sm',function () {
                 if(res.status ===  200){
                     $(this).closest("tr").remove();
                     
-                    if(selectedpartner) {
-                        fetchtenants(selectedpartner);
+                    if(selectedtenant) {
+                        fetchUsers(selectedtenant);
                         
                     } 
                     }
@@ -132,38 +161,62 @@ function fetchtenants(id) {
     fetch(`http://${url}:3030/getTenants/${id}`)
         .then((data) => data.json())
         .then((data) => {
-          //  parterData = [];
           $("#partners-table").find("tr:gt(0)").remove();
             if(data.success && data.data.length > 0){
                 let data_arr = data.data;
                 data_arr.forEach((item) => {
-                    /*
-                    parterData.append({
-                        "id" : data.partnerId,
-                        "name": data.displayName
-                    });
-                    */
-
+                    console.log(item)
                     var id = item.tenantId;
                     var name = item.displayName;
+                        
+                    tenantData.push({
+                        id,
+                        name
+                    });
 
-                    var admin = item.members.find(x => x.role == "TENANT_ADMIN");
-                    var admin_name = admin.displayName;
-                    var admin_email = admin.email;
-                    var partner_name = item.partner.name;
+                    $('#tenantSelect').append(`<option> ${name}</option>`);
+                    $('#tenantSelect2').append(`<option> ${name}</option>`);
 
-                    var payl = `<tr> <td>${id}</td> <td>${name}</td> <td>${admin_name}</td> <td>${admin_email}</td> <td>${partner_name}</td> <td class="td-actions text-right"><button type="button" rel="tooltip" title="" class="btn btn-primary btn-link btn-sm" data-original-title="Edit Task"><i class="material-icons">edit</i></button><button type="button" rel="tooltip" title="" class="btn btn-danger btn-link btn-sm" data-original-title="Remove"><i class="material-icons">close</i></button></td></tr> 
-` ;
-                    $('#parentSelect').append(`<option> ${name}</option>`);
-                    //console.log(payl+ "payl")
-                    $('#partners-table tbody').append(payl)
 
                 })
 
             }
             else{
                 console.log("length of returned array of zero")
-                $('#partners-table tbody tr').remove();
+                //$('#partners-table tbody tr').remove();
+                $('#tenantSelect').find('option').not(':first').remove();;
+                $('#tenantSelect2 ').find('option').not(':first').remove();;
+            }
+        })
+        .catch((er) => {
+            console.log(er)
+        })
+};
+function fetchUsers(id) {
+    fetch(`http://${url}:3030/getUsers/${id}`)
+        .then((data) => data.json())
+        .then((data) => {
+          $("#partners-table").find("tr:gt(0)").remove();
+            if(data.success && data.data.length > 0){
+                let data_arr = data.data;
+                data_arr.forEach((item) => {
+                    console.log(item)
+                    var id = item.userId;
+                    var name = item.displayName;
+                    var partner_name = item.partner.name;
+                    var tenant_name = item.tenant.tenantName;
+                    var createdBy = item.auditLog.createdBy;
+                    var payl = `<tr> <td>${id}</td> <td>${name}</td> <td>${tenant_name}</td> <td>${partner_name}</td> <td>${createdBy}</td> <td class="td-actions text-right"><button type="button" rel="tooltip" title="" class="btn btn-primary btn-link btn-sm" data-original-title="Edit Task"><i class="material-icons">edit</i></button><button type="button" rel="tooltip" title="" class="btn btn-danger btn-link btn-sm" data-original-title="Remove"><i class="material-icons">close</i></button></td></tr>`;
+
+                    //console.log(payl+ "payl")
+                    $('#partners-table tbody').append(payl)
+                })
+
+            }
+            else{
+                console.log("length of returned array of zero")
+                //$('#partners-table tbody tr').remove();
+        
             }
         })
         .catch((er) => {
@@ -198,26 +251,3 @@ function getPartnersData() {
         })
 }
 
-function fetchtenants(id) {
-    fetch(`http://${url}:3030/getTenants/${id}`)
-        .then((data) => data.json())
-        .then((data) => {
-          //  parterData = [];
-            
-            if(data.success && data.data.length > 0){
-                let data_arr = data.data;
-                data_arr.forEach((item) => {
-            
-            
-                })
-
-            }
-            else{
-                console.log("length of returned array of zero")
-                $('#partners-table tbody tr').remove();
-            }
-        })
-        .catch((er) => {
-            console.log(er)
-        })
-};

@@ -174,13 +174,13 @@
                                             Name
                                         </th>
                                         <th>
-                                            Admin Name
-                                        </th>
-                                        <th>
-                                            Admin Email
+                                            Tenant Name
                                         </th>
                                         <th>
                                             Partner Name
+                                        </th>
+                                        <th>
+                                            Created By
                                         </th>
                                         <th>
                                             Actions
@@ -208,18 +208,11 @@
                                             <div class="col-md-10">
                                                 <div class="form-group bmd-form-group">
                                                     <label class="bmd-label-floating">User Name</label>
-                                                    <input type="text" class="form-control" id="partner-name" required name="partnerName">
+                                                    <input type="text" class="form-control" id="user-name" required name="userName">
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-md-10">
-                                                <div class="form-group bmd-form-group">
-                                                    <label class="bmd-label-floating">User Type</label>
-                                                    <input type="text" class="form-control" id="partner-name" required name="partnerName">
-                                                </div>
-                                            </div>
-                                        </div>
+                                       
 
                                         
                                         <div class="row">
@@ -264,7 +257,15 @@
                                                     </div>
                                             </div>
                                         </div>
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <div class="form-group bmd-form-group">
+                                                    <div class="form-group bmd-form-group">
+                                                        <input type="hidden" id="tenant ID" name="custId" value="3487">
 
+                                                    </div>
+                                            </div>
+                                        </div>
 
                                     </div>
                                     </form>
@@ -345,7 +346,7 @@
 <script src="../assets/js/material-dashboard.js?v=2.1.1" type="text/javascript"></script>
 <!-- Material Dashboard DEMO methods, don't include it in your project! -->
 <script src="../assets/demo/demo.js"></script>]
-            <script src="../assets/js/tenantManage.js"></script>
+            <script src="../assets/js/userManage.js"></script>
             
 <script>
     $(document).ready(function() {

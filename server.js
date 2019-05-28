@@ -41,6 +41,15 @@ app.get('/getTenants/:id',(req,res) => {
 
     })
 });
+
+app.get('/getUsers/:id',(req,res) => {
+    request(`http://35.244.1.53:7678/console/users/listby/tenant/${req.params.id}/page/0/size/10`, {json: true}, (err, response, body) => {
+        console.log(body);
+        res.send(body)
+
+    })
+});
+
 app.post('/addPartners',(req,res)=>{
 //res.sendStatus(200)
     //console.log(req)
@@ -74,6 +83,22 @@ app.post('/addTenants',(req,res)=>{
 
 
 });
+app.post('/addUsers',(req,res)=>{
+
+
+    request.post({
+        headers: {'content-type' : 'application/json'},
+        url:     'http://35.244.1.53:7678/console/users',
+        body:    JSON.stringify(req.body)
+    }, function(error, response, body){
+        res.send(body)
+
+    });
+
+
+
+
+});
 
 
 app.post('/deletePartner',(req,res)=>{
@@ -88,6 +113,15 @@ app.post('/deletePartner',(req,res)=>{
 app.post('/deleteTenant',(req,res)=>{
     console.log('http://35.244.1.53:7678/console/tenants/'+req.body.id);
     var url = 'http://35.244.1.53:7678/console/tenants/'+req.body.id;
+    request.delete(url,{},(err,response,body) =>{
+        res.send(response)
+    });
+
+});
+
+app.post('/deleteUser',(req,res)=>{
+    console.log('http://35.244.1.53:7678/console/users/'+req.body.id);
+    var url = 'http://35.244.1.53:7678/console/users/'+req.body.id;
     request.delete(url,{},(err,response,body) =>{
         res.send(response)
     });
